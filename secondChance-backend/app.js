@@ -5,7 +5,7 @@ const cors = require('cors');
 const pinoLogger = require('./logger');
 
 const connectToDatabase = require('./models/db');
-const {loadData} = require("./util/import-mongo/index");
+// const {loadData} = require("./util/import-mongo/index");
 
 
 const app = express();
@@ -20,8 +20,11 @@ connectToDatabase().then(() => {
 
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static('public'));
 
-// Route files
+
+const secondChanceItemsRoutes = require('./routes/secondChanceItemsRoutes');
 
 // authRoutes Step 2: import the authRoutes and store in a constant called authRoutes
 //{{insert code here}}
@@ -48,10 +51,14 @@ app.use(pinoHttp({ logger }));
 // Search API Task 2: add the searchRoutes to the server by using the app.use() method.
 //{{insert code here}}
 
+app.use('/api/secondchance/items', secondChanceItemsRoutes);
+
+
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-    console.error(err);
+    console.error(err); 
+    logger.error(err.stack); 
     res.status(500).send('Internal Server Error');
 });
 
@@ -61,4 +68,7 @@ app.get("/",(req,res)=>{
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
+    pinoLogger.info(`Server running on port ${port}`); 
 });
+
+module.exports = app;
