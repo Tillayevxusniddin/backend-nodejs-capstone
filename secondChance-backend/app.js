@@ -36,7 +36,7 @@ app.get('/', (req, res) => {
   res.send('Inside the server')
 })
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   console.error(err)
   logger.error(err.stack)
   res.status(500).send('Internal Server Error')
