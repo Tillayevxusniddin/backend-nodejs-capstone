@@ -57,4 +57,47 @@ router.post('/register', async (req, res) => {
     }
 });
 
+router.post('/login', async (req, res) => {
+    try {
+        const db = await connectToDatabase();
+        const collection = db.collection("users");
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            logger.error('Email and password are required for login.');
+            return res.status(400).json({ error: 'Email and password are required.' });
+        }
+
+        const normalizedEmail = email.toLowerCase().trim();
+        const theUser = await collection.findOne({ email: normalizedEmail });
+        
+        const passwordMatch = theUser ? await bcryptjs.compare(password, theUser.password) : false;
+
+        if (!theUser || !passwordMatch) {
+            logger.error(`Invalid login attempt for email: ${email}`);
+            return res.status(401).json({ error: "Email yoki parol noto'g'ri" });
+        }
+
+        const userName = theUser.firstName;
+        const userEmail = theUser.email;
+
+        const payload = {
+            user: {
+                id: theUser._id.toString(),
+            },
+        };
+
+        const authtoken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        res.json({ authtoken, userName, userEmail });
+
+    } catch (e) {
+        logger.error('Error during user login:', e);
+        return res.status(500).json({ error: 'Internal server error', details: e.message });
+    }
+});
+
+
+
+
 module.exports = router;
