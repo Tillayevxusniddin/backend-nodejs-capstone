@@ -25,6 +25,7 @@ app.use(express.static('public'));
 
 
 const secondChanceItemsRoutes = require('./routes/secondChanceItemsRoutes');
+const searchRoutes = require('./routes/searchRoutes')
 
 // authRoutes Step 2: import the authRoutes and store in a constant called authRoutes
 //{{insert code here}}
@@ -52,6 +53,7 @@ app.use(pinoHttp({ logger }));
 //{{insert code here}}
 
 app.use('/api/secondchance/items', secondChanceItemsRoutes);
+app.use('/api/secondchance/search', searchRoutes);
 
 
 
