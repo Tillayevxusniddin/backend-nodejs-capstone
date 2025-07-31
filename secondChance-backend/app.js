@@ -2,6 +2,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const pinoLogger = require('./logger');
 
 const connectToDatabase = require('./models/db');
@@ -25,6 +26,7 @@ app.use(express.static('public'));
 
 const secondChanceItemsRoutes = require('./routes/secondChanceItemsRoutes');
 const searchRoutes = require('./routes/searchRoutes')
+const authRoutes = require('./routes/authRoutes');
 const pinoHttp = require('pino-http');
 const logger = require('./logger');
 
@@ -35,6 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/secondchance/items', secondChanceItemsRoutes);
 app.use('/api/secondchance/search', searchRoutes);
+app.use('/api/auth', authRoutes);
 
 
 
