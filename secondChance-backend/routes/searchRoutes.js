@@ -7,18 +7,13 @@ router.get('/', async (req, res, next) => {
     try {
         const db = await connectToDatabase(); 
 
-        // const collection = db.collection("gifts");
-        const collection = db.collection("secondChanceItems");
+        const collection = db.collection(process.env.MONGO_COLLECTION);
 
-        // Initialize the query object
         let query = {};
 
-        // Add the name filter to the query if the name parameter is not empty
         if (req.query.name && req.query.name.trim() !== '') { // HINT: req.query.name && req.query.name.trim() !== ''
             query.name = { $regex: new RegExp(req.query.name.trim(), 'i') };
         }
-
-        // Task 3: Add other filters to the query
         if (req.query.category) {
             query.category = req.query.category; // HINT: query.category = req.query.category;
         }
@@ -29,10 +24,9 @@ router.get('/', async (req, res, next) => {
             query.age_years = { $lte: parseInt(req.query.age_years) }; // HINT: query.age_years = { $lte: parseInt(req.query.age_years) };
         }
 
-        // Task 4: Fetch filtered gifts using the find(query) method. Make sure to use await and store the result in the `gifts` constant
-        const items = await collection.find(query).toArray(); 
+        const gifts = await collection.find(query).toArray(); 
 
-        res.json(items);
+        res.json(gifts);
     } catch (e) {
         next(e);
     }
