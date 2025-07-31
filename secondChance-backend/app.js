@@ -4,8 +4,9 @@ const cors = require('cors');
 const path = require('path');
 const pinoLogger = require('./logger');
 const connectToDatabase = require('./models/db');
-// const { loadData } = require('./util/import-mongo/index'); 
-const pinoHttp = require('pino-http'); 
+// const { loadData } = require('./util/import-mongo/index');
+const pinoHttp = require('pino-http');
+const logger = require('./logger'); 
 
 const secondChanceItemsRoutes = require('./routes/secondChanceItemsRoutes');
 const authRoutes = require('./routes/authRoutes');
