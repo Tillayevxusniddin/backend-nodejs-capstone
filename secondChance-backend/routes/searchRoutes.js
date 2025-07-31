@@ -2,29 +2,29 @@ const express = require('express');
 const router = express.Router();
 const connectToDatabase = require('../models/db');
 
-// Search for gifts
+
 router.get('/', async (req, res, next) => {
     try {
-        const db = await connectToDatabase(); 
+        const db = await connectToDatabase();
 
         const collection = db.collection(process.env.MONGO_COLLECTION);
 
-        let query = {};
+        const query = {}; 
 
-        if (req.query.name && req.query.name.trim() !== '') { // HINT: req.query.name && req.query.name.trim() !== ''
+        if (req.query.name && req.query.name.trim() !== '') {
             query.name = { $regex: new RegExp(req.query.name.trim(), 'i') };
         }
         if (req.query.category) {
-            query.category = req.query.category; // HINT: query.category = req.query.category;
+            query.category = req.query.category;
         }
         if (req.query.condition) {
-            query.condition = req.query.condition; // HINT: query.condition = req.query.condition;
+            query.condition = req.query.condition;
         }
         if (req.query.age_years) {
-            query.age_years = { $lte: parseInt(req.query.age_years) }; // HINT: query.age_years = { $lte: parseInt(req.query.age_years) };
+            query.age_years = { $lte: parseInt(req.query.age_years) };
         }
 
-        const gifts = await collection.find(query).toArray(); 
+        const gifts = await collection.find(query).toArray();
 
         res.json(gifts);
     } catch (e) {

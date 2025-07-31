@@ -11,7 +11,7 @@ const { ObjectId } = require('mongodb');
 router.post('/register', async (req, res) => {
     try {
         const db = await connectToDatabase();
-        const collection = db.collection("users");
+        const collection = db.collection('users'); 
         const { email, password, firstName, lastName } = req.body;
 
         if (!email || !password || !firstName || !lastName) {
@@ -35,20 +35,19 @@ router.post('/register', async (req, res) => {
             firstName,
             lastName,
             password: hash,
-            createdAt: new Date(),
+            createdAt: new Date()
         });
 
         const payload = {
             user: {
-                id: newUser.insertedId.toString(),
-            },
+                id: newUser.insertedId.toString()
+            }
         };
 
         const authtoken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         logger.info('User registered successfully');
         res.json({ authtoken, email: normalizedEmail });
-
     } catch (e) {
         logger.error('Error during user registration:', e);
         return res.status(500).json({ error: 'Internal server error', details: e.message });
@@ -58,7 +57,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const db = await connectToDatabase();
-        const collection = db.collection("users");
+        const collection = db.collection('users');
         const { email, password } = req.body;
 
         if (!email || !password) {
@@ -73,7 +72,7 @@ router.post('/login', async (req, res) => {
 
         if (!theUser || !passwordMatch) {
             logger.error(`Invalid login attempt for email: ${email}`);
-            return res.status(401).json({ error: "Email yoki parol noto'g'ri" });
+            return res.status(401).json({ error: 'Email yoki parol noto\'g\'ri' }); // '' ga o'zgartirildi
         }
 
         const userName = theUser.firstName;
@@ -81,14 +80,13 @@ router.post('/login', async (req, res) => {
 
         const payload = {
             user: {
-                id: theUser._id.toString(),
-            },
+                id: theUser._id.toString()
+            }
         };
 
         const authtoken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         res.json({ authtoken, userName, userEmail });
-
     } catch (e) {
         logger.error('Error during user login:', e);
         return res.status(500).json({ error: 'Internal server error', details: e.message });
@@ -101,7 +99,7 @@ router.put(
     [
         body('firstName').optional().isString().trim().notEmpty().withMessage('First name must be a non-empty string'),
         body('lastName').optional().isString().trim().notEmpty().withMessage('Last name must be a non-empty string'),
-        body('password').optional().isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+        body('password').optional().isLength({ min: 6 }).withMessage('Password must be at least 6 characters long')
     ],
     async (req, res) => {
         try {
@@ -125,11 +123,11 @@ router.put(
             if (Object.keys(updateFields).length === 0) {
                 return res.status(400).json({ error: 'Yangilash uchun hech qanday ma\'lumot berilmadi' });
             }
-            
+
             updateFields.updatedAt = new Date();
 
             const db = await connectToDatabase();
-            const collection = db.collection("users");
+            const collection = db.collection('users'); 
 
             const updatedResult = await collection.findOneAndUpdate(
                 { _id: new ObjectId(userId) },
@@ -137,14 +135,13 @@ router.put(
                 { returnDocument: 'after' }
             );
 
-            if (!updatedResult) {
+            if (!updatedResult.value) { 
                 logger.error(`User with ID ${userId} not found for update.`);
-                return res.status(404).json({ error: "Foydalanuvchi topilmadi" });
+                return res.status(404).json({ error: 'Foydalanuvchi topilmadi' });
             }
 
-            logger.info(`User profile for ${updatedResult.email} updated successfully.`);
-            res.json({ message: "Profil muvaffaqiyatli yangilandi", user: updatedResult });
-
+            logger.info(`User profile for ${updatedResult.value.email} updated successfully.`);
+            res.json({ message: 'Profil muvaffaqiyatli yangilandi', user: updatedResult.value }); 
         } catch (e) {
             logger.error('Error during user profile update:', e);
             return res.status(500).json({ error: 'Internal server error', details: e.message });
