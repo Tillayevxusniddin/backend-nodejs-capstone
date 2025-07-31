@@ -1,5 +1,5 @@
 /** @type {import('eslint').Linter.Config} */
-export default [
+module.exports = [
   {
     files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
     ignores: ["dist/", "node_modules/"],
