@@ -25,7 +25,7 @@ function ItemPage() {
       // Get the form data
       const formData = new FormData();
       const file = document.getElementById('file').files[0];
-      formData.append('file', file);
+      formData.append('image', file);
       formData.append('name', document.getElementById('name').value);
       formData.append('category', category);
       formData.append('condition', condition);
