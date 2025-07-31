@@ -11,9 +11,16 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
+      
     - name: Install Node.js
       uses: actions/setup-node@v4
-    - name: Install and Run Linter
+      with:
+        node-version: '18' 
+        cache: 'npm'
+        cache-dependency-path: 'secondChance-backend/package-lock.json'
+
+    - name: Install Dependencies and Run Linter
+      working-directory: ./secondChance-backend 
       run: |
         npm install
         npm run lint
